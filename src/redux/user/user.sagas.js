@@ -1,20 +1,42 @@
 import { takeLatest, put, all, call } from "redux-saga/effects";
 import UserActionTypes from "./user.types";
-import { signUpSuccess, signUpFaliure } from "./user.action";
-import { createHtttpClient } from "../../service/AxiosHttpClient";
+import axios from "axios";
+import {
+  signUpSuccess,
+  signUpFaliure,
+  signInSuccess,
+  signInFailure,
+  signOutSuccess,
+  signOutFailure
+} from "./user.action";
 // to calculate or manipulate action/actions before sending to reducer also keeping the component clean by putting the code here
 // Instead of dispatching from component; dispatching from here if needed keeps component clean especially when it has backend code
 // get the payload -> send to server -> pass needed argument to SignUpSucess() and signUpFaliure()
 export function* signUp({ payload: { email, password, displayName } }) {
   try {
-    createHtttpClient({
-      headers: { "content-type": "application/json" },
-      method: "post",
-      data: JSON.stringify({ email, password, displayName })
-    });
+    axios
+      .post("http://localhost:9090/auth/signup", JSON.stringify({ email, password, displayName }), {
+        headers: { "content-type": "application/json" }
+      })
+      .then(saveData => console.log("saveData: ", saveData))
+      .catch(e => console.log(e));
     yield put(signUpSuccess({ email, password, displayName }));
   } catch (error) {
-    yield put(signUpFaliure(error));
+    yield put(signInFailure(error));
+  }
+}
+
+// worker saga: signIn (payload taken from signUpStart)
+// 1. does user give data is found within DB if true then redirect to homepage else same page
+export function* signInWithEmail({ payload: { email, password } }) {
+  try {
+    yield axios
+      .get("http://localhost:9090/auth/signin")
+      .then(response => console.log(response))
+      .catch(e => console.log(e));
+    yield put(signInSuccess({ email, password }));
+  } catch (error) {
+    yield put(signInFailure(error));
   }
 }
 
@@ -24,14 +46,25 @@ export function* signUp({ payload: { email, password, displayName } }) {
 export function* onSignUpStart() {
   yield takeLatest(UserActionTypes.SIGN_UP_START, signUp);
 }
+// export function* onSignUpSuccess() {
+//   yield takeLatest(UserActionTypes.SIGN_UP_SUCCESS, signInAfterSignUp);
+// }
+export function* onEmailSignInStart() {
+  yield takeLatest(UserActionTypes.EMAIL_SIGN_IN_START, signInWithEmail);
+}
+// export function* onSignOutStart() {
+//   yield takeLatest(UserActionTypes.SIGN_OUT_START, signOut);
+// }
+
 // when SIGN_UP_SUCCESS happens (that's when onSignUpStart called) then invoke signInAfterSignUp
 // export function* onSignUpSuccess() {
 //   yield takeLatest(UserActionTypes.SIGN_UP_SUCCESS, signInAfterSignUp);
 // }
 
 // now this userSagas is going to be within root-saga and from there all sagas will be within root-saga & that'll go to Store
+
 export function* userSagas() {
-  yield all([call(onSignUpStart)]);
+  yield all([call(onEmailSignInStart), call(onSignUpStart)]);
 }
 
 /* An action after dispatch() is going to be used to change the INITIAL VALUE OF THE STATE via reducer

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Switch, Route, Redirect, Link } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { selectCurrentUser } from "../redux/user/user.selectors";
 import SignUp from "./components/sign-up/sign-up.component";
+import SignIn from "./components/sign-in/sign-in.component";
+import withRouteGuardComponent from "./components/with-router-guard/with-route-guard.component";
 
 // import "./App.css";
 
@@ -14,13 +16,23 @@ const homePage = () => {
     </div>
   );
 };
-const myProfile = () => {
+
+class MyProfClass extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return <h1>Oto kore lav nei</h1>;
+  }
+}
+
+const myProfile = withRouteGuardComponent(() => {
   return (
     <div>
       <h3>This page should only be accessible after succssful login</h3>
     </div>
   );
-};
+});
 
 const App = ({ currentUser }) => {
   const [text, setText] = useState("Hello REACT");
@@ -33,6 +45,8 @@ const App = ({ currentUser }) => {
         <Route exact path="/" component={homePage} />
         <Route path="/myprofile" component={myProfile} />
         <Route exact path="/signup" render={() => (currentUser ? <Redirect to="/" /> : <SignUp />)} />
+        <Route exact path="/private" component={withRouteGuardComponent(MyProfClass)} />
+        <Route exact path="/signin" render={() => (currentUser ? <Redirect to="/" /> : <SignIn />)} />
       </Switch>
     </div>
   );
