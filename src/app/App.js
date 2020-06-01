@@ -5,7 +5,7 @@ import { createStructuredSelector } from "reselect";
 import { selectCurrentUser } from "../redux/user/user.selectors";
 import SignUp from "./components/sign-up/sign-up.component";
 
-import "./App.css";
+// import "./App.css";
 
 const homePage = () => {
   return (
