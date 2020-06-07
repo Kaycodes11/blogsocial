@@ -12,16 +12,21 @@ const withRouteGuard = WrappedComponent => {
     componentDidMount() {}
 
     render() {
-      const { user } = this.props;
+      const { user, match } = this.props;
+      console.log(this.props);
+
       // destructured isAuthenticated from user
       const { isAuthenticated } = user;
 
-      if (isAuthenticated) {
+      if (isAuthenticated && match.path === "/signin") {
+        // if isAuthenticated and match.path === /'signin' then redirect to homepage
+        return <Redirect to="/signin" />;
+      } else if (isAuthenticated) {
         // isAuthenticated has value, exist or true then
         return <WrappedComponent />;
       }
 
-      return <Redirect to="/signup" />;
+      return <Redirect to="/signin" />;
     }
   };
 };

@@ -1,7 +1,8 @@
 import PostActionTypes from "./post.types";
 
-export const postCollectionsStart = () => ({
-  type: PostActionTypes.POST_COLLECTIONS_START
+export const postCollectionsStart = post => ({
+  type: PostActionTypes.POST_COLLECTIONS_START,
+  payload: post
 });
 
 export const postCollectionsSuccess = postCollectionsMap => ({

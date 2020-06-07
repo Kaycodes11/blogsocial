@@ -12,20 +12,31 @@ const userReducer = (state = INITIAL_STATE_OF_USER, action) => {
   switch (action.type) {
     case UserActionTypes.SIGN_UP_SUCCESS:
     case UserActionTypes.SIGN_IN_SUCCESS:
-      return {
-        ...state,
-        currentUser: action.payload,
-        error: null
-      };
+      console.log("ACTION", action.payload);
+      const payload = action.payload;
+      return payload.error.code === 1
+        ? {
+            ...state,
+            currentUser: action.payload,
+            isAuthenticated: true,
+            error: null
+          }
+        : {
+            ...state,
+            currentUser: null,
+            isAuthenticated: false,
+            error: payload.error
+          };
     case UserActionTypes.SIGN_OUT_SUCCESS:
       return {
         ...state,
         currentUser: null,
-        error: null
+        error: null,
+        isAuthenticated: false
       };
     case UserActionTypes.SIGN_IN_FALIURE:
-    case UserActionTypes.SIGN_OUT_FAILURE:
-    case UserActionTypes.SIGN_UP_FAILURE:
+    case UserActionTypes.SIGN_OUT_FALIURE:
+    case UserActionTypes.SIGN_UP_FALIURE:
       return {
         ...state,
         error: action.payload

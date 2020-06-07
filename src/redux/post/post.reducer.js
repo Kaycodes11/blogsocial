@@ -3,16 +3,11 @@ import PostActionTypes from "./post.types";
 const INITIAL_STATE_OF_POST = {
   postCollection: [],
   error: null,
-  isPostCollectionLoading: false
+  isPostCollectionLoading: true
 };
 
 const postReducer = (state = INITIAL_STATE_OF_POST, action) => {
   switch (action.type) {
-    case PostActionTypes.POST_COLLECTIONS_START:
-      return {
-        ...state,
-        isPostCollectionLoading: true
-      };
     case PostActionTypes.POST_COLLECTIONS_SUCCESS:
       return {
         ...state,

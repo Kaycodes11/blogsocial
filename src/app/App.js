@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { selectCurrentUser } from "../redux/user/user.selectors";
-import SignUp from "./components/sign-up/sign-up.component";
-import SignIn from "./components/sign-in/sign-in.component";
+import { checkUserSession } from "../redux/user/user.action";
+import Header from "./components/header/header.component";
+import SignInAndSignupPage from "../pages/sign-in-and-sign-up/sign-in-sign-up.component";
 import withRouteGuardComponent from "./components/with-router-guard/with-route-guard.component";
+import CreatePost from "./components/create-post/create-post.component";
 
 // import "./App.css";
 
-const homePage = () => {
+const homePage = props => {
+  console.log("routeObj", props);
   return (
     <div>
       <h2>Here it is homepage</h2>
@@ -26,27 +29,32 @@ class MyProfClass extends React.Component {
   }
 }
 
-const myProfile = withRouteGuardComponent(() => {
-  return (
-    <div>
-      <h3>This page should only be accessible after succssful login</h3>
-    </div>
-  );
-});
+const MyProfile = withRouter(
+  withRouteGuardComponent(() => {
+    return (
+      <div>
+        <h3>This page should only be accessible after succssful login</h3>
+      </div>
+    );
+  })
+);
 
-const App = ({ currentUser }) => {
-  const [text, setText] = useState("Hello REACT");
+const App = ({ currentUser, checkUserSession }) => {
   useEffect(() => {
-    console.log("mounted");
-  }, []);
+    console.log("currentUser: ", currentUser);
+    checkUserSession(); //returns an obj with type
+  }, [checkUserSession]);
   return (
     <div>
+      <Header />
       <Switch>
         <Route exact path="/" component={homePage} />
-        <Route path="/myprofile" component={myProfile} />
-        <Route exact path="/signup" render={() => (currentUser ? <Redirect to="/" /> : <SignUp />)} />
+        <Route path="/myprofile" render={() => (currentUser ? <MyProfile /> : <Redirect to="/" />)} />
+        {/* <Route exact path="/signup" render={() => (currentUser ? <Redirect to="/" /> : <SignInAndSignupPage />)} /> */}
         <Route exact path="/private" component={withRouteGuardComponent(MyProfClass)} />
-        <Route exact path="/signin" render={() => (currentUser ? <Redirect to="/" /> : <SignIn />)} />
+        <Route exact path="/signin" render={() => (currentUser ? <Redirect to="/" /> : <SignInAndSignupPage />)} />
+        <Route exact path="/create" component={withRouteGuardComponent(CreatePost)} />
+        <Route exact path="*" render={() => "404 not found"} />
       </Switch>
     </div>
   );
@@ -55,8 +63,10 @@ const App = ({ currentUser }) => {
 const mapStateToProps = createStructuredSelector({
   currentUser: selectCurrentUser
 });
-
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = dispatch => ({
+  checkUserSession: () => dispatch(checkUserSession())
+});
+export default connect(mapStateToProps, mapDispatchToProps)(App);
 
 /* If action needed to be changed after dispatch before going to reducer; use saga or thunk & if state isn't
 needed as it's from reducer then use 'Selector' to change to STATE and then use it within any component as needed

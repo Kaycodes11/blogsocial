@@ -4,7 +4,6 @@ import "./sign-in.styles.scss";
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-button/custom-button.component";
 import { emailSignInStart } from "../../../redux/user/user.action";
-// import { emailSignInStart } from "../../redux/user/user.actions";
 // import { SignInContainer, SignInTitle, ButtonsBarContainer } from "./sign-in.styles";
 
 const SignIn = ({ emailSignInStart }) => {

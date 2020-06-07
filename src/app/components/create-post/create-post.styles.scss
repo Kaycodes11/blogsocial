@@ -1,0 +1,20 @@
+.form-post {
+  display: flex;
+  flex-direction: column;
+  height: 50%;
+  width: 50%;
+  margin: 0 auto;
+}
+.create {
+  margin: 20px;
+  padding: 10px;
+}
+
+.btn {
+  display: inline-block;
+  margin: 0 auto;
+  width: fit-content;
+  padding: 10px;
+  background-color: black;
+  color: white;
+}

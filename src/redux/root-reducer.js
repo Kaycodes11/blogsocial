@@ -9,7 +9,7 @@ import postReducer from "./post/post.reducer";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["post"]
+  whitelist: ["user"]
   // whatever key is put within whitelist will be persisted
 };
 
