@@ -41,7 +41,6 @@ const MyProfile = withRouter(
 
 const App = ({ currentUser, checkUserSession }) => {
   useEffect(() => {
-    console.log("currentUser: ", currentUser);
     checkUserSession(); //returns an obj with type
   }, [checkUserSession]);
   return (

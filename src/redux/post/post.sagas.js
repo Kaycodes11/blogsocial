@@ -3,13 +3,13 @@ import PostActionTypes from "./post.types";
 import axios from "axios";
 import { postCollectionsSuccess, postCollectionsFaliure } from "./post.action";
 
-// SENDING POST REQUEST : required to send  = title, mainContent, desc, labels
-async function savePostToDb({ title, labels, mainContent, desc }) {
+// SENDING POST REQUEST : required to send  = title, mainContent, desc, labels and userid
+async function savePostToDb({ title, desc, labels, mainContent, userId }) {
   const response = axios.post(
-    "http:localhost:9090/api/posts/create",
-    JSON.stringify({ title, labels, mainContent, desc }),
+    "http://localhost:9090/api/posts/create",
+    JSON.stringify({ title, labels, mainContent, desc, userId }),
     {
-      headers: { "content-type": "application/json" }
+      headers: { "Content-Type": "application/json" }
     }
   );
   return response;
@@ -17,15 +17,15 @@ async function savePostToDb({ title, labels, mainContent, desc }) {
 async function allowSubmit(postData) {
   if (postData.error.code === 1) {
     return postData;
-  } else if (postData.error.code === 1) {
+  } else if (postData.error.code === 0) {
     throw postData.error;
   }
 }
-export function* submitPost({ payload: { title, labels, mainContent, desc } }) {
+export function* submitPost({ payload: { title, desc, labels, mainContent, _id } }) {
   try {
     /* savePostToDb expected arguments'll be from this function that comes from postCollectionsStart's payload which SAGA
      gets from postCollectionsStart as it goes to reducetr after dispatched from createPost component */
-    const savePostToDbResponse = yield call(savePostToDb, { title, labels, mainContent, desc }); //database POST request
+    const savePostToDbResponse = yield call(savePostToDb, { title, desc, labels, mainContent, _id }); //database POST request
     const response = yield call(allowSubmit, savePostToDbResponse.data);
     yield put(postCollectionsSuccess(response));
   } catch (error) {

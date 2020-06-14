@@ -15,7 +15,7 @@ import {
 
 async function signUpWithEmailAndPassword({ email, password, name }) {
   return await axios.post("http://localhost:9090/api/auth/signup", JSON.stringify({ email, password, name }), {
-    headers: { "content-type": "application/json" }
+    headers: { "Content-Type": "application/json" }
   });
 }
 export function* signUp({ payload: { email, password, name } }) {
